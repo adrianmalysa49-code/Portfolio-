@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adrian Małysa — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #040a08;
+  --bg-card: #0a1a14;
+  --green-dark: #0d2b1f;
+  --green-mid: #1a6b4a;
+  --green-bright: #2ecc88;
+  --green-glow: #3dffa8;
+  --green-pale: #a8ffd4;
+  --text: #e8f5ef;
+  --text-dim: #6b9b85;
+  --text-muted: #3a6b55;
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════ CURSOR GLOW ═══════ */
+.cursor-glow {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(46,204,136,0.06) 0%, transparent 70%);
+  transform: translate(-50%,-50%);
+  transition: left 0.6s ease-out, top 0.6s ease-out;
+}
+
+/* ═══════ NOISE OVERLAY ═══════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px;
+}
+
+/* ═══════ SCROLL PROGRESS ═══════ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green-bright), var(--green-glow));
+  z-index: 10000;
+  box-shadow: 0 0 20px var(--green-glow);
+  transition: width 0.1s linear;
+}
+
+/* ═══════ NAV ═══════ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(4,10,8,0.7);
+  border-bottom: 1px solid rgba(46,204,136,0.08);
+  transition: transform 0.4s;
+}
+nav.hidden { transform: translateY(-100%); }
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: var(--green-bright);
+}
+.nav-logo span { color: var(--text-dim); font-weight: 400; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.nav-links a:hover {
+  color: var(--green-glow);
+  text-shadow: 0 0 20px rgba(61,255,168,0.3);
+}
+
+/* ═══════ HERO ═══════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  right: -200px;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46,204,136,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,107,74,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+.hero-tag::before {
+  content: '//';
+  margin-right: 8px;
+  color: var(--text-muted);
+}
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s forwards;
+}
+.hero-name .green {
+  background: linear-gradient(135deg, var(--green-bright), var(--green-glow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-role {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--text-dim);
+  font-weight: 300;
+  max-width: 500px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeUp 1s 0.7s forwards;
+}
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 60px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0;
+  animation: fadeUp 1s 1.2s forwards;
+}
+.hero-scroll .line {
+  width: 40px;
+  height: 1px;
+  background: var(--green-mid);
+  animation: pulse-line 2s infinite;
+}
+
+/* ═══════ GRID LINES BG ═══════ */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(46,204,136,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,204,136,0.5) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ═══════ SECTION TITLES ═══════ */
+.section-header {
+  padding: 80px 60px 40px;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+.section-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--green-bright);
+  letter-spacing: 0.15em;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--green-mid), transparent);
+}
+
+/* ═══════ CATEGORY FILTER ═══════ */
+.filter-bar {
+  padding: 0 60px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-dim);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.filter-btn:hover, .filter-btn.active {
+  border-color: var(--green-bright);
+  color: var(--green-bright);
+  background: rgba(46,204,136,0.08);
+  box-shadow: 0 0 20px rgba(46,204,136,0.1);
+}
+
+/* ═══════ MASONRY GALLERY ═══════ */
+.gallery {
+  padding: 0 40px 100px;
+  columns: 3;
+  column-gap: 20px;
+}
+.gallery-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.gallery-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery-item img {
+  width: 100%;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), filter 0.6s;
+}
+.gallery-item:hover img {
+  transform: scale(1.04);
+  filter: brightness(0.7);
+}
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(4,10,8,0.9) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+.gallery-overlay h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.gallery-overlay p {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--green-bright);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ═══════ LIGHTBOX ═══════ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(4,10,8,0.95);
+  backdrop-filter: blur(30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.lightbox.active { opacity: 1; pointer-events: all; }
+.lightbox img {
+  max-width: 85vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 80px rgba(46,204,136,0.1);
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.lightbox.active img { transform: scale(1); }
+.lightbox-close {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--text-muted);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.lightbox-close:hover {
+  border-color: var(--green-bright);
+  color: var(--green-glow);
+  box-shadow: 0 0 20px rgba(46,204,136,0.2);
+}
+.lightbox-info {
+  position: absolute;
+  bottom: 40px;
+  left: 60px;
+}
+.lightbox-info h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.lightbox-info p {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--green-bright);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ═══════ ABOUT SECTION ═══════ */
+.about {
+  padding: 60px 60px 120px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-text p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-dim);
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+.about-text p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+.stat {
+  padding: 28px;
+  border: 1px solid rgba(46,204,136,0.1);
+  border-radius: 16px;
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+}
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green-bright), transparent);
+  opacity: 0.3;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--green-bright);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ═══════ SKILLS MARQUEE ═══════ */
+.marquee-wrapper {
+  padding: 60px 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(46,204,136,0.08);
+  border-bottom: 1px solid rgba(46,204,136,0.08);
+}
+.marquee {
+  display: flex;
+  gap: 60px;
+  animation: marquee 20s linear infinite;
+  width: max-content;
+}
+.marquee span {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+.marquee span::after {
+  content: '◆';
+  margin-left: 60px;
+  color: var(--green-mid);
+  font-size: 0.6rem;
+  vertical-align: middle;
+}
+
+/* ═══════ CONTACT ═══════ */
+.contact {
+  padding: 80px 60px 60px;
+  text-align: center;
+}
+.contact-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+.contact-heading .green {
+  background: linear-gradient(135deg, var(--green-bright), var(--green-glow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.contact-sub {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: 1px solid var(--green-mid);
+  border-radius: 100px;
+  color: var(--green-bright);
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.contact-link:hover {
+  background: var(--green-bright);
+  color: var(--bg);
+  box-shadow: 0 0 40px rgba(46,204,136,0.3);
+  border-color: var(--green-bright);
+}
+
+/* ═══════ FOOTER ═══════ */
+footer {
+  padding: 40px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(46,204,136,0.08);
+}
+footer p {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ═══════ ANIMATIONS ═══════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-line {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media (max-width: 1024px) {
+  .gallery { columns: 2; }
+  .about { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 768px) {
+  .hero { padding: 120px 24px 80px; }
+  .section-header { padding: 60px 24px 30px; }
+  .filter-bar { padding: 0 24px 30px; }
+  .gallery { columns: 1; padding: 0 24px 60px; }
+  .about { padding: 40px 24px 80px; }
+  .contact { padding: 60px 24px; }
+  footer { padding: 30px 24px; flex-direction: column; gap: 10px; }
+  nav { padding: 16px 24px; }
+  .nav-links { gap: 16px; }
+  .nav-links a { font-size: 0.65rem; }
+  .hero-scroll { left: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-bg"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">AM<span>.studio</span></div>
+  <div class="nav-links">
+    <a href="#work">Prace</a>
+    <a href="#about">O mnie</a>
+    <a href="#contact">Kontakt</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-tag">Web Developer / Graphic Designer</div>
+  <h1 class="hero-name">Adrian<br><span class="green">Małysa</span></h1>
+  <p class="hero-role">Tworzę nowoczesne strony internetowe i projekty graficzne, które wyróżniają się na tle konkurencji. Kraków, Polska.</p>
+  <div class="hero-scroll">
+    <span class="line"></span>
+    Przewiń w dół
+  </div>
+</section>
+
+<!-- SKILLS MARQUEE -->
+<div class="marquee-wrapper">
+  <div class="marquee">
+    <span>Web Design</span>
+    <span>UI/UX</span>
+    <span>Graphic Design</span>
+    <span>Photo Manipulation</span>
+    <span>Branding</span>
+    <span>Typography</span>
+    <span>Illustration</span>
+    <span>Poster Design</span>
+    <span>Web Design</span>
+    <span>UI/UX</span>
+    <span>Graphic Design</span>
+    <span>Photo Manipulation</span>
+    <span>Branding</span>
+    <span>Typography</span>
+    <span>Illustration</span>
+    <span>Poster Design</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<div class="section-header" id="work">
+  <span class="section-num">01</span>
+  <h2 class="section-title">Wybrane prace</h2>
+  <div class="section-line"></div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">Wszystko</button>
+  <button class="filter-btn" data-filter="web">Web Design</button>
+  <button class="filter-btn" data-filter="poster">Plakaty</button>
+  <button class="filter-btn" data-filter="graphic">Grafika</button>
+  <button class="filter-btn" data-filter="illustration">Ilustracja</button>
+  <button class="filter-btn" data-filter="photo">Fotomanipulacja</button>
+</div>
+
+<div class="gallery" id="gallery">
+  <div class="gallery-item" data-cat="web" data-title="KREM Beauty Salon" data-tag="Web Design">
+    <img src="img/1776363380889_image.png" alt="KREM Beauty Salon" loading="lazy">
+    <div class="gallery-overlay"><h3>KREM Beauty Salon</h3><p>Web Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="poster" data-title="Lamborghini Huracán STO" data-tag="Poster Design">
+    <img src="img/1776363399839_image.png" alt="Lamborghini Huracán STO" loading="lazy">
+    <div class="gallery-overlay"><h3>Lamborghini Huracán STO</h3><p>Poster Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="Typography Portrait" data-tag="Graphic Design">
+    <img src="img/1776363412112_image.png" alt="Typography Portrait" loading="lazy">
+    <div class="gallery-overlay"><h3>Typography Portrait</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="VIBES — Fashion Editorial" data-tag="Graphic Design">
+    <img src="img/1776363421490_image.png" alt="VIBES Fashion" loading="lazy">
+    <div class="gallery-overlay"><h3>VIBES — Fashion Editorial</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="BIRD — Typography Art" data-tag="Graphic Design">
+    <img src="img/1776363432231_image.png" alt="BIRD Typography" loading="lazy">
+    <div class="gallery-overlay"><h3>BIRD — Typography Art</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="Stencil Portrait" data-tag="Graphic Design">
+    <img src="img/1776363444706_image.png" alt="Stencil Portrait" loading="lazy">
+    <div class="gallery-overlay"><h3>Stencil Portrait</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="photo" data-title="Digital Portrait Edit" data-tag="Photo Editing">
+    <img src="img/1776363468659_image.png" alt="Digital Portrait" loading="lazy">
+    <div class="gallery-overlay"><h3>Digital Portrait Edit</h3><p>Photo Editing</p></div>
+  </div>
+  <div class="gallery-item" data-cat="photo" data-title="Edge of the World" data-tag="Photo Manipulation">
+    <img src="img/1776363504238_image.png" alt="Surreal Ocean" loading="lazy">
+    <div class="gallery-overlay"><h3>Edge of the World</h3><p>Photo Manipulation</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="Neon Camera" data-tag="Graphic Design">
+    <img src="img/1776363517149_image.png" alt="Neon Camera" loading="lazy">
+    <div class="gallery-overlay"><h3>Neon Camera</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="illustration" data-title="3D Social — Hearts" data-tag="3D Illustration">
+    <img src="img/1776363532109_image.png" alt="3D Hearts" loading="lazy">
+    <div class="gallery-overlay"><h3>3D Social — Hearts</h3><p>3D Illustration</p></div>
+  </div>
+  <div class="gallery-item" data-cat="illustration" data-title="Apple — Vector Art" data-tag="Illustration">
+    <img src="img/1776363544283_image.png" alt="Apple Illustration" loading="lazy">
+    <div class="gallery-overlay"><h3>Apple — Vector Art</h3><p>Illustration</p></div>
+  </div>
+  <div class="gallery-item" data-cat="illustration" data-title="Donut — Sweet Render" data-tag="Illustration">
+    <img src="img/1776363555580_image.png" alt="Donut" loading="lazy">
+    <div class="gallery-overlay"><h3>Donut — Sweet Render</h3><p>Illustration</p></div>
+  </div>
+  <div class="gallery-item" data-cat="illustration" data-title="Cat — Pop Art" data-tag="Illustration">
+    <img src="img/1776363567449_image.png" alt="Cat Pop Art" loading="lazy">
+    <div class="gallery-overlay"><h3>Cat — Pop Art</h3><p>Illustration</p></div>
+  </div>
+  <div class="gallery-item" data-cat="illustration" data-title="Pop Art Woman" data-tag="Illustration">
+    <img src="img/1776363583966_image.png" alt="Pop Art Woman" loading="lazy">
+    <div class="gallery-overlay"><h3>Pop Art Woman</h3><p>Illustration</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="Purple Mood" data-tag="Graphic Design">
+    <img src="img/1776363594290_image.png" alt="Purple Portrait" loading="lazy">
+    <div class="gallery-overlay"><h3>Purple Mood</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="graphic" data-title="Neo City — Synthwave" data-tag="Graphic Design">
+    <img src="img/1776363605757_image.png" alt="Neo City Synthwave" loading="lazy">
+    <div class="gallery-overlay"><h3>Neo City — Synthwave</h3><p>Graphic Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="poster" data-title="Porsche 911 GT3 RS" data-tag="Poster Design">
+    <img src="img/ABC9C3CC-C969-42C3-9D4B-4E3A37A0C44B.png" alt="Porsche 911 GT3 RS" loading="lazy">
+    <div class="gallery-overlay"><h3>Porsche 911 GT3 RS</h3><p>Poster Design</p></div>
+  </div>
+  <div class="gallery-item" data-cat="poster" data-title="Ford Mustang GT" data-tag="Poster Design">
+    <img src="img/DFC988D9-C69B-4E81-BCB7-2E8427DDE749.png" alt="Ford Mustang GT" loading="lazy">
+    <div class="gallery-overlay"><h3>Ford Mustang GT</h3><p>Poster Design</p></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section-header" id="about">
+  <span class="section-num">02</span>
+  <h2 class="section-title">O mnie</h2>
+  <div class="section-line"></div>
+</div>
+
+<section class="about">
+  <div class="about-text">
+    <p><strong>Cześć, jestem Adrian</strong> — web developer i grafik z Krakowa. Specjalizuję się w tworzeniu nowoczesnych stron internetowych oraz projektów graficznych, które łączą estetykę z funkcjonalnością.</p>
+    <p>Moją pasją jest design, który nie tylko wygląda dobrze, ale przede wszystkim <strong>działa i konwertuje</strong>. Od brandingu, przez plakaty, po pełne wdrożenia stron — każdy projekt traktuję indywidualnie.</p>
+    <p>Jeśli szukasz kogoś, kto nada Twojej marce charakter i nowoczesny wygląd — <strong>porozmawiajmy</strong>.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">18+</div><div class="stat-label">Projektów</div></div>
+    <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Lat doświadczenia</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Satysfakcji</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Kreatywności</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <h2 class="contact-heading">Stwórzmy coś<br><span class="green">razem</span></h2>
+  <p class="contact-sub">Masz projekt w głowie? Odezwij się — chętnie porozmawiam.</p>
+  <div class="contact-links">
+    <a href="mailto:kontakt@adrianmalysa.pl" class="contact-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      E-mail
+    </a>
+    <a href="https://www.behance.net" target="_blank" class="contact-link">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988H0V5.021h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zM3 11h3.584c2.508 0 2.906-3-.312-3H3v3zm3.391 3H3v3.016h3.341c3.055 0 2.868-3.016.05-3.016z"/></svg>
+      Behance
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Adrian Małysa. Wszelkie prawa zastrzeżone.</p>
+  <p>Kraków, Polska</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <img src="" alt="" id="lightboxImg">
+  <div class="lightbox-info">
+    <h3 id="lightboxTitle"></h3>
+    <p id="lightboxTag"></p>
+  </div>
+</div>
+
+<script>
+// Cursor glow
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// Scroll progress
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scrollProgress').style.width = (window.scrollY / h * 100) + '%';
+});
+
+// Nav hide/show
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  if (window.scrollY > lastScroll && window.scrollY > 100) nav.classList.add('hidden');
+  else nav.classList.remove('hidden');
+  lastScroll = window.scrollY;
+});
+
+// Intersection observer for gallery
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.gallery-item').forEach(el => obs.observe(el));
+
+// Filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      if (f === 'all' || item.dataset.cat === f) {
+        item.style.display = '';
+        setTimeout(() => item.classList.add('visible'), 100);
+      } else {
+        item.style.display = 'none';
+        item.classList.remove('visible');
+      }
+    });
+  });
+});
+
+// Lightbox
+const lb = document.getElementById('lightbox');
+document.querySelectorAll('.gallery-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.getElementById('lightboxImg').src = item.querySelector('img').src;
+    document.getElementById('lightboxTitle').textContent = item.dataset.title;
+    document.getElementById('lightboxTag').textContent = item.dataset.tag;
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+document.getElementById('lightboxClose').addEventListener('click', closeLb);
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+function closeLb() {
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>
